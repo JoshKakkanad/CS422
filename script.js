@@ -3,6 +3,74 @@ let routingLayer;
 let userMarker;
 const apiKey = '1ea29fb3-6b38-4313-b0f8-4bf703ef6892';
 
+
+const uicBuildings = {
+    // Academic and Administrative Facilities
+    "University Hall": [41.874065, -87.649169],
+    "UH": [41.874065, -87.649169],
+    "Jefferson Hall": [41.872673, -87.650028],
+    "JH": [41.872673, -87.650028],
+    "Lecture Center Building A": [41.872143, -87.650828],
+    "LCA": [41.872143, -87.650828],
+    "Lecture Center Building B": [41.871886, -87.651267],
+    "LCB": [41.871886, -87.651267],
+    "Lecture Center Building C": [41.872545, -87.651061],
+    "LCC": [41.872545, -87.651061],
+    "Lecture Center Building D": [41.872317, -87.651573],
+    "LCD": [41.872317, -87.651573],
+    "Lecture Center Building E": [41.872079, -87.650630],
+    "LCE": [41.872079, -87.650630],
+    "Lecture Center Building F": [41.871800, -87.650340],
+    "LCF": [41.871800, -87.650340],
+    "Student Center East": [41.872366, -87.648296],
+    "SCE": [41.872366, -87.648296],
+    "Student Center East Tower": [41.872366, -87.648296],
+    "SCET": [41.872366, -87.648296],
+    "Science & Engineering Laboratory East": [41.870769, -87.649636],
+    "SELE": [41.870769, -87.649636],
+    "Science & Engineering Laboratory West": [41.872593, -87.652593],
+    "SELW": [41.872593, -87.652593],
+    "Daley Library": [41.872728, -87.648208],
+    "LIB": [41.872728, -87.648208],
+    "Grant Hall": [41.874065, -87.649169],
+    "GH": [41.874065, -87.649169],
+    "Douglass Hall": [41.873399, -87.650351],
+    "DH": [41.873399, -87.650351],
+    "Lincoln Hall": [41.874732, -87.649402],
+    "LH": [41.874732, -87.649402],
+    "Taft Hall": [41.871850, -87.648067],
+    "TH": [41.871850, -87.648067],
+    "Addams Hall": [41.870118, -87.648242],
+    "AH": [41.870118, -87.648242],
+    "Burnham Hall": [41.871850, -87.647186],
+    "BH": [41.871850, -87.647186],
+    "Behavioral Sciences Building": [41.870769, -87.649636],
+    "BSB": [41.870769, -87.649636],
+    "Science & Engineering South": [41.872593, -87.652593],
+    "SES": [41.872593, -87.652593],
+    "Education, Theatre, Music and Social Work": [41.873544, -87.650935],
+    "ETMSW": [41.873544, -87.650935],
+    "UIC Theatre": [41.873544, -87.650935],
+    "UICT": [41.873544, -87.650935],
+    "Henry Hall": [41.868980, -87.648052],
+    "HH": [41.868980, -87.648052],
+    "Stevenson Hall": [41.874355, -87.653780],
+    "SH": [41.874355, -87.653780],
+    "Academic & Residential Complex": [41.868941, -87.650501],
+    "ARC": [41.868941, -87.650501],
+    "Student Residence Hall": [41.868628, -87.650287],
+    "SRH": [41.868628, -87.650287],
+    "Campus Recreation Center East": [41.872394, -87.647367],
+    "CRCE": [41.872394, -87.647367],
+    "Art and Design Hall": [41.874355, -87.653780],
+    "Engineering Research Facility": [41.872041, -87.652411],
+    "ERF": [41.872041, -87.652411],
+    "Engineering Innovation Building": [41.870591, -87.653190],
+    "EIB": [41.870591, -87.653190],
+    "Flames Athletic Center": [41.875, -87.651],
+    "FAC": [41.875, -87.651]
+};
+
 // Initialize the map
 function initializeMap() {
     map = L.map('map').setView([41.8708, -87.6505], 15);
@@ -24,8 +92,19 @@ function onLocationFound(e) {
     }
 }
 
-// Geocode addresses using direct fetch to GraphHopper API
 async function geocodeAddress(address) {
+    // Convert input to lowercase to match dictionary keys
+    const normalizedAddress = address.toLowerCase();
+
+    // Check if the address matches a UIC building or abbreviation in our local dictionary
+    for (const [key, coords] of Object.entries(uicBuildings)) {
+        if (key.toLowerCase() === normalizedAddress) {
+            console.log(`Using local coordinates for: ${key}`);
+            return coords;
+        }
+    }
+
+    // If not found in dictionary, fall back to using the GraphHopper API
     const encodedAddress = encodeURIComponent(address);
     const url = `https://graphhopper.com/api/1/geocode?q=${encodedAddress}&locale=en&limit=1&key=${apiKey}`;
 
@@ -34,14 +113,7 @@ async function geocodeAddress(address) {
 
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            console.error(`Geocoding request failed: ${response.status} - ${response.statusText}`);
-            alert(`Geocoding failed with status: ${response.status}`);
-            return null;
-        }
-
         const data = await response.json();
-        console.log("Geocoding response data:", data);
 
         if (!data.hits || data.hits.length === 0) {
             alert("Address not found. Please check the address format.");
@@ -53,10 +125,10 @@ async function geocodeAddress(address) {
         return [lat, lng];
     } catch (error) {
         console.error("Error during geocoding fetch:", error);
-        alert("Geocoding failed due to a network error. Please try again.");
         return null;
     }
 }
+
 
 // Utility function to decode the encoded polyline
 function decodePolyline(encoded, precision = 1e5) {
