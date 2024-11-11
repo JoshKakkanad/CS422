@@ -1,7 +1,7 @@
 let map;
 let routingLayer;
 let userMarker;
-const apiKey = 'ENTER API KEY HERE';
+const apiKey = '1ea29fb3-6b38-4313-b0f8-4bf703ef6892';
 
 // Initialize the map
 function initializeMap() {
