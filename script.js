@@ -80,6 +80,7 @@ function initializeMap() {
     }).addTo(map);
 
     map.locate({ watch: true, setView: true, maxZoom: 16 });
+    map.zoomControl.setPosition('bottomleft');
     map.on('locationfound', onLocationFound);
 }
 
@@ -88,9 +89,11 @@ function onLocationFound(e) {
     if (userMarker) {
         userMarker.setLatLng(e.latlng);
     } else {
-        userMarker = L.marker(e.latlng).addTo(map);
+        userMarker = L.marker(e.latlng, { icon: L.icon({ iconUrl: 'gps_icon.png', iconSize: [32, 32] }) }).addTo(map);
     }
+    console.log("User location updated:", e.latlng);
 }
+
 
 async function geocodeAddress(address) {
     // Convert input to lowercase to match dictionary keys
@@ -223,19 +226,105 @@ document.getElementById('routeBtn').addEventListener('click', async () => {
     const startAddress = document.getElementById('start').value.trim();
     const endAddress = document.getElementById('end').value.trim();
 
-    if (!startAddress || !endAddress) {
-        alert("Please enter both starting and destination addresses.");
+    // Check if an end address is provided
+    if (!endAddress) {
+        alert("Please enter a destination address.");
         return;
     }
 
-    const startCoords = await geocodeAddress(startAddress);
+    let startCoords;
     const endCoords = await geocodeAddress(endAddress);
 
+    // If no starting address is provided, use the user's current location
+    if (!startAddress) {
+        if (userMarker && userMarker.getLatLng()) {
+            const userLocation = userMarker.getLatLng();
+            startCoords = [userLocation.lat, userLocation.lng];
+            console.log("Using user's current location as start:", startCoords);
+        } else {
+            alert("Unable to determine your current location. Please enter a starting address.");
+            return;
+        }
+    } else {
+        // Geocode the starting address
+        startCoords = await geocodeAddress(startAddress);
+    }
+
+    // Check if both coordinates are valid
     if (startCoords && endCoords) {
         console.log("Start coordinates:", startCoords);
         console.log("End coordinates:", endCoords);
         await route(startCoords, endCoords);
     }
 });
+
+// Event listener for the cancel route button
+document.getElementById('cancelBtn').addEventListener('click', () => {
+    if (routingLayer) {
+        routingLayer.remove();
+        routingLayer = null;
+        console.log("Route canceled.");
+    }
+
+    // Clear the input fields
+    document.getElementById('start').value = '';
+    document.getElementById('end').value = '';
+});
+
+
+// Check if we're on the main page
+if (document.getElementById('postEventBtn')) {
+    // Add event listener to the "Post Event" button on the main page
+    document.getElementById('postEventBtn').addEventListener('click', () => {
+        window.location.href = 'social.html';
+    });
+}
+
+// Check if we're on the social.html page
+if (document.getElementById('addEventBtn')) {
+    const eventBoard = document.getElementById('event-board');
+    const storedEvents = JSON.parse(localStorage.getItem('uicEvents')) || [];
+
+    // Load existing events from local storage
+    storedEvents.forEach(event => addEventToBoard(event));
+
+    // Add event listener to the "Add Event" button on social.html page
+    document.getElementById('addEventBtn').addEventListener('click', () => {
+        const title = document.getElementById('eventTitle').value.trim();
+        const description = document.getElementById('eventDescription').value.trim();
+        const location = document.getElementById('eventLocation').value.trim();
+
+        if (title && description && location) {
+            const event = { title, description, location };
+            addEventToBoard(event);
+            saveEvent(event);
+
+            // Clear the form fields after saving
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventDescription').value = '';
+            document.getElementById('eventLocation').value = '';
+        } else {
+            alert("Please fill out all fields.");
+        }
+    });
+
+    // Function to add an event to the event board
+    function addEventToBoard(event) {
+        const eventTile = document.createElement('div');
+        eventTile.className = 'event-tile';
+        eventTile.innerHTML = `
+            <h3>${event.title}</h3>
+            <p>${event.description}</p>
+            <p><strong>Location:</strong> ${event.location}</p>
+        `;
+        eventBoard.appendChild(eventTile);
+    }
+
+    // Function to save the event to local storage
+    function saveEvent(event) {
+        storedEvents.push(event);
+        localStorage.setItem('uicEvents', JSON.stringify(storedEvents));
+    }
+}
 
 initializeMap();

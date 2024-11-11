@@ -1,44 +1,30 @@
+<!-- Social page for event posting -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Social Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIC Social Events</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h2>Post an Event</h2>
-    <form id="event-form">
-        <input type="text" id="event-title" placeholder="Event Title" required>
-        <textarea id="event-description" placeholder="Event Description" required></textarea>
-        <button type="submit">Add Event</button>
-    </form>
-    <div id="events-list"></div>
-    <button onclick="window.location.href='index.html'">Back to Map</button>
+<body class="social-page">
+    <div id="social-header">
+        <img src="uic_logo.png" alt="UIC Logo" class="uic-logo">
+        <h1>UIC Events Board</h1>
+    </div>
 
-    <script>
-        const eventsList = JSON.parse(localStorage.getItem('events')) || [];
-        const form = document.getElementById('event-form');
-        const eventsDiv = document.getElementById('events-list');
+    <!-- Event Posting Form -->
+    <div id="event-form">
+        <h2>Post an Event</h2>
+        <input type="text" id="eventTitle" placeholder="Event Title" required>
+        <textarea id="eventDescription" placeholder="Event Description" required></textarea>
+        <input type="text" id="eventLocation" placeholder="Event Location (e.g., UH, SCE)" required>
+        <button id="addEventBtn">Add Event</button>
+    </div>
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('event-title').value;
-            const description = document.getElementById('event-description').value;
-            eventsList.push({ title, description });
-            localStorage.setItem('events', JSON.stringify(eventsList));
-            displayEvents();
-            form.reset();
-        });
+    <!-- Event Board -->
+    <div id="event-board"></div>
 
-        function displayEvents() {
-            eventsDiv.innerHTML = '';
-            eventsList.forEach(event => {
-                const eventDiv = document.createElement('div');
-                eventDiv.innerHTML = `<h3>${event.title}</h3><p>${event.description}</p>`;
-                eventsDiv.appendChild(eventDiv);
-            });
-        }
-        displayEvents();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
