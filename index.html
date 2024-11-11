@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIC Campus Navigation</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/graphhopper-js-api-client/dist/graphhopper-client.js"></script>
+</head>
+<body>
+    <!-- Sidebar for navigation controls -->
+    <div id="sidebar">
+        <input type="text" id="start" placeholder="Starting Location">
+        <input type="text" id="end" placeholder="Destination">
+        <button id="routeBtn">Route</button>
+        <button id="cancelBtn">Cancel Route</button>
+    </div>
+
+    <!-- Social and favorite locations section -->
+    <div id="social">
+        <button id="postEventBtn">Post Event</button>
+        <button id="favoritesBtn">Show Favorites</button>
+        <div id="favoritesList"></div>
+    </div>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Event Posting Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <h2>Post Event</h2>
+            <input type="text" id="eventName" placeholder="Event Name">
+            <textarea id="eventDescription" placeholder="Event Description"></textarea>
+            <button id="saveEventBtn">Save Event</button>
+            <button id="closeModalBtn">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

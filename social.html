@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Social Events</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Post an Event</h2>
+    <form id="event-form">
+        <input type="text" id="event-title" placeholder="Event Title" required>
+        <textarea id="event-description" placeholder="Event Description" required></textarea>
+        <button type="submit">Add Event</button>
+    </form>
+    <div id="events-list"></div>
+    <button onclick="window.location.href='index.html'">Back to Map</button>
+
+    <script>
+        const eventsList = JSON.parse(localStorage.getItem('events')) || [];
+        const form = document.getElementById('event-form');
+        const eventsDiv = document.getElementById('events-list');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('event-title').value;
+            const description = document.getElementById('event-description').value;
+            eventsList.push({ title, description });
+            localStorage.setItem('events', JSON.stringify(eventsList));
+            displayEvents();
+            form.reset();
+        });
+
+        function displayEvents() {
+            eventsDiv.innerHTML = '';
+            eventsList.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.innerHTML = `<h3>${event.title}</h3><p>${event.description}</p>`;
+                eventsDiv.appendChild(eventDiv);
+            });
+        }
+        displayEvents();
+    </script>
+</body>
+</html>
