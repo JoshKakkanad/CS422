@@ -1,15 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UIC Campus Navigation</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="topbar.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/graphhopper-js-api-client/dist/graphhopper-client.js"></script>
 </head>
+
 <body>
+    <!-- Side menu that shows up after pressing the "menu" button -->
+    <div id="sideMenu" class="side-menu">
+        <a href="#" onclick="closeSideMenu()">
+            <div class="button-container"><img src="images/sidemenu-home.png">Home</div>
+        </a>
+        <a href="#" onclick="navigateButtonClick()">
+            <div class="button-container"><img src="images/sidemenu-map.png">Navigate</div>
+        </a>
+        <a href="#">
+            <div class="button-container"><img src="images/sidemenu-social.png">Social</div>
+        </a>
+        <a href="#">
+            <div class="button-container"><img src="images/sidemenu-events.png">Events</div>
+        </a>
+        <a href="#">
+            <div class="button-container"><img src="images/sidemenu-fav.png">Favorites</div>
+        </a>
+    </div>
+
+    <!-- Topbar with app title and some buttons -->
+    <div class="topbar">
+        <div class="left-buttons">
+            <button>
+                <img src="images/topbar-menu.png" class="buttonImg" onclick="showSideMenu()">
+            </button>
+            <!-- <button>
+                <img src="images/topbar-gear.png" class="buttonImg">
+            </button> -->
+            <button>
+                <img src="images/topbar-triangle.png" class="buttonImg">
+            </button>
+        </div>
+
+        <div class="title">UIC Navigator</div>
+
+        <div class="logo">
+            <img src="images/topbar-logo.png" alt="Logo">
+        </div>
+    </div>
+    <script>
+        function navigateButtonClick() {
+            closeSideMenu();
+            document.getElementById( "sidebar" ).style.display = "block";
+        }
+
+        function showSideMenu() {
+            document.getElementById( "sideMenu" ).style.width = "250px";
+            document.getElementById( "overlay" ).style.display = "block";
+            document.getElementById( "sidebar" ).style.display = "none";
+        }
+
+        function closeSideMenu() {
+            document.getElementById( "sideMenu" ).style.width = "0px";
+            document.getElementById( "overlay" ).style.display = "none";
+        }
+
+        document.getElementById( "overlay" ).addEventListener( "click", function () {
+            closeSideMenu();
+        } );
+    </script>
+
+
     <!-- Sidebar for navigation controls -->
     <div id="sidebar">
         <input type="text" id="start" placeholder="Starting Location">
@@ -19,11 +84,11 @@
     </div>
 
     <!-- Social and favorite locations section -->
-    <div id="social">
+    <!-- <div id="social">
         <button id="postEventBtn">Post Event</button>
         <button id="favoritesBtn">Show Favorites</button>
         <div id="favoritesList"></div>
-    </div>
+    </div> -->
 
     <!-- Map container -->
     <div id="map"></div>
@@ -39,6 +104,10 @@
         </div>
     </div>
 
+    <div id="overlay" class="overlay" onclick="closeSideMenu()"></div>
+
     <script src="script.js"></script>
+    <script src="scriptFavorites.js"></script>
 </body>
+
 </html>
