@@ -17,7 +17,7 @@ function closeSideMenu() {
 function showFavorites() {
     console.log( "ee" );
     document.getElementById( "sideMenu" ).style.width = "0px";
-    document.getElementById( "favorites-menu" ).style.width = "250px";
+    document.getElementById( "favorites-menu" ).style.width = "350px";
 }
 
 function closeFavorites() {
