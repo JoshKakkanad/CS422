@@ -27,9 +27,25 @@
         <a href="#">
             <div class="button-container"><img src="images/sidemenu-events.png">Events</div>
         </a>
-        <a href="#">
+        <a href="#" onclick="showFavorites()">
             <div class="button-container"><img src="images/sidemenu-fav.png">Favorites</div>
         </a>
+        <a href="#" onclick="showBuildings()">
+            <div class="button-container"><img src="images/icon-building.png">Buildings</div>
+        </a>
+    </div>
+
+    <div id="favorites-menu" class="side-menu">
+        <a href="#" onclick="closeFavorites()">
+            <div class="button-container"><img src="images/sidemenu-home.png">Close</div>
+        </a>
+    </div>
+
+    <div id="buildings-menu" class="side-menu">
+        <a href="#" onclick="closeFavorites()">
+            <div class="button-container"><img src="images/sidemenu-home.png">Close</div>
+        </a>
+
     </div>
 
     <!-- Topbar with app title and some buttons -->
@@ -52,27 +68,6 @@
             <img src="images/topbar-logo.png" alt="Logo">
         </div>
     </div>
-    <script>
-        function navigateButtonClick() {
-            closeSideMenu();
-            document.getElementById( "sidebar" ).style.display = "block";
-        }
-
-        function showSideMenu() {
-            document.getElementById( "sideMenu" ).style.width = "250px";
-            document.getElementById( "overlay" ).style.display = "block";
-            document.getElementById( "sidebar" ).style.display = "none";
-        }
-
-        function closeSideMenu() {
-            document.getElementById( "sideMenu" ).style.width = "0px";
-            document.getElementById( "overlay" ).style.display = "none";
-        }
-
-        document.getElementById( "overlay" ).addEventListener( "click", function () {
-            closeSideMenu();
-        } );
-    </script>
 
 
     <!-- Sidebar for navigation controls -->
@@ -104,9 +99,14 @@
         </div>
     </div>
 
+    <div id="my-location">
+        <img src="images/icon-my-location.png" onclick="getCurrentLocation()">
+    </div>
+
     <div id="overlay" class="overlay" onclick="closeSideMenu()"></div>
 
     <script src="script.js"></script>
+    <script src="scriptMenu.js"></script>
     <script src="scriptFavorites.js"></script>
 </body>
 

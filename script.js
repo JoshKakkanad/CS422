@@ -329,6 +329,9 @@ if ( document.getElementById( 'addEventBtn' ) ) {
 
 initializeMap();
 
+const popup = L.popup()
+    .setContent( 'I am a standalone popup.' );
+
 function onLocationFound( e ) {
     var radius = e.accuracy;
 
@@ -350,5 +353,28 @@ function onMapClick( e ) {
         .setLatLng( e.latlng )
         .setContent( `You clicked the map at ${e.latlng.toString()}` )
         .openOn( map );
-    console.log( e.latlng.toString() );
 }
+
+function populateBuildingsMenu() {
+    const menuDiv = document.getElementById( "buildings-menu" );
+
+    for ( const [name, coordinates] of Object.entries( uicBuildings ) ) {
+        const link = document.createElement( "a" );
+        link.href = `#`;
+        link.onclick = () => {
+            console.log( `Navigating to ${name} at ${coordinates[0]}, ${coordinates[1]}` );
+        };
+
+        // Set the inner HTML of the link to show the building's name
+        link.innerHTML = `
+        <div class="building-list">
+          ${name}
+        </div>
+      `;
+
+        // Append the link to the menuDiv
+        menuDiv.appendChild( link );
+    }
+}
+
+populateBuildingsMenu();

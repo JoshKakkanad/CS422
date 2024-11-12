@@ -165,3 +165,7 @@ body.social-page {
     height: 75px;
     cursor: pointer;
 }
+
+.building-list {
+    font-size: 1em;
+}
