@@ -3,6 +3,11 @@ let routingLayer;
 let userMarker;
 const apiKey = '1ea29fb3-6b38-4313-b0f8-4bf703ef6892';
 
+const defaultLat = 41.871894;
+const defaultLng = -87.64924;
+const defaultZoom = 20;
+
+
 
 const uicBuildings = {
     // Academic and Administrative Facilities
@@ -73,13 +78,13 @@ const uicBuildings = {
 
 // Initialize the map
 function initializeMap() {
-    map = L.map( 'map' ).setView( [41.8708, -87.6505], 15 );
+    map = L.map( 'map' ).setView( [defaultLat, defaultLng], defaultZoom );
 
     L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     } ).addTo( map );
 
-    map.locate( { watch: true, setView: true, maxZoom: 16 } );
+    //map.locate( { watch: true, setView: true, maxZoom: defaultZoom } );
     map.zoomControl.setPosition( 'bottomleft' );
     map.on( 'locationfound', onLocationFound );
 }
@@ -363,6 +368,9 @@ function populateBuildingsMenu() {
         link.href = `#`;
         link.onclick = () => {
             console.log( `Navigating to ${name} at ${coordinates[0]}, ${coordinates[1]}` );
+            document.getElementById( 'end' ).value = name;
+            closeFavorites();
+            navigateButtonClick();
         };
 
         // Set the inner HTML of the link to show the building's name

@@ -32,7 +32,13 @@ function showBuildings() {
     document.getElementById( "buildings-menu" ).style.width = "350px";
 }
 
+function homeButtonClick() {
+    closeSideMenu();
+    map.setView( [defaultLat, defaultLng], defaultZoom );
+}
+
 document.getElementById( "overlay" ).addEventListener( "click", function () {
     closeSideMenu();
     closeFavorites();
 } );
+
