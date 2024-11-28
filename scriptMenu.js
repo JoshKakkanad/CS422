@@ -71,7 +71,7 @@ searchInput.addEventListener( 'input', () => {
                     When clicked on one of the suggestions
                 */
                 onDestinationPicked( suggestion );
-                searchInput.value = suggestion;
+                searchInput.value = "";
                 suggestionsList.innerHTML = '';
             } );
             suggestionsList.appendChild( li );
