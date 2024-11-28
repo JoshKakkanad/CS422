@@ -114,10 +114,14 @@ function onLocationFound( e ) {
     }
     console.log( "User location updated:", e.latlng );
 
+    // Stop refreshing location. If we want live navi, need to handle it here?
     map.stopLocate();
 }
 
 
+// Tries to find the coordinates of provided address
+// If provided known building name, will return coordinated to that
+// Otherwise, will use API to try to find building by name
 async function geocodeAddress( address ) {
     // Convert input to lowercase to match dictionary keys
     const normalizedAddress = address.toLowerCase();
@@ -244,7 +248,8 @@ async function route( startCoords, endCoords ) {
     }
 }
 
-
+// Starts navigation based on building names, not coordinates
+// Initially this code was called by Josh's navigation UI
 async function startNavigation( startAddress, endAddress ) {
     // Check if an end address is provided
     if ( !endAddress ) {
@@ -278,6 +283,9 @@ async function startNavigation( startAddress, endAddress ) {
     }
 }
 
+// Starts navigation based on coordinates.
+// Uses current location as start address (if available)
+// Otherwise nothing happens
 async function startNavigationByLocation( a, b ) {
     if ( !userMarker ) {
         alert( "Unable to determine your current location. Please enable location services." );
@@ -370,8 +378,8 @@ initializeMap();
 const popup = L.popup()
     .setContent( 'I am a standalone popup.' );
 
-const buildingPopup = L.popup().setContent( "Default building " );
 
+// Called if user clicks on left-lower corner location button
 function getCurrentLocation() {
     map.locate( { setView: true, maxZoom: 16, watch: true } );
 }
@@ -379,6 +387,11 @@ function getCurrentLocation() {
 map.on( 'locationfound', onLocationFound );
 map.on( 'click', onMapClick );
 
+/*
+    Called when user clicks somewhere on the map.
+    Tries to find closest known UIC building, otherwise creates generic pin.
+    Pin offers navigation to selected location.
+*/
 function onMapClick( e ) {
     const clickedLocation = e.latlng;
     let closestBuilding = null;

@@ -1,3 +1,6 @@
+/*
+    UI functions
+*/
 function navigateButtonClick() {
     closeSideMenu();
     document.getElementById( "sidebar" ).style.display = "block";
@@ -42,6 +45,11 @@ document.getElementById( "overlay" ).addEventListener( "click", function () {
     closeFavorites();
 } );
 
+
+/*
+    Handles the search bar.
+    Creates a list of suggested buildings.
+*/
 const searchInput = document.getElementById( 'search' );
 const clearBtn = document.getElementById( 'clear-btn' );
 const suggestionsList = document.getElementById( 'suggestions-list' );
