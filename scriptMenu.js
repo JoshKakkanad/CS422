@@ -42,3 +42,41 @@ document.getElementById( "overlay" ).addEventListener( "click", function () {
     closeFavorites();
 } );
 
+const searchInput = document.getElementById( 'search' );
+const clearBtn = document.getElementById( 'clear-btn' );
+const suggestionsList = document.getElementById( 'suggestions-list' );
+
+searchInput.addEventListener( 'input', () => {
+    const query = searchInput.value.toLowerCase();
+    suggestionsList.innerHTML = '';
+
+    if ( query ) {
+        const filteredSuggestions = Object.keys( uicBuildings ).filter( building =>
+            building.toLowerCase().includes( query )
+        );
+
+        filteredSuggestions.forEach( suggestion => {
+            const li = document.createElement( 'li' );
+            li.textContent = suggestion;
+            li.addEventListener( 'click', () => {
+                /*
+                    When clicked on one of the suggestions
+                */
+                onDestinationPicked( suggestion );
+                searchInput.value = suggestion;
+                suggestionsList.innerHTML = '';
+            } );
+            suggestionsList.appendChild( li );
+        } );
+
+        clearBtn.style.display = 'block';
+    } else {
+        clearBtn.style.display = 'none';
+    }
+} );
+
+clearBtn.addEventListener( 'click', () => {
+    searchInput.value = '';
+    suggestionsList.innerHTML = '';
+    clearBtn.style.display = 'none';
+} );

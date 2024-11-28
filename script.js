@@ -100,7 +100,7 @@ function initializeMap() {
         attribution: '&copy; OpenStreetMap contributors'
     } ).addTo( map );
 
-    //map.locate( { watch: true, setView: true, maxZoom: defaultZoom } );
+    map.locate( { watch: true, setView: false, maxZoom: defaultZoom } );
     map.zoomControl.setPosition( 'bottomleft' );
     map.on( 'locationfound', onLocationFound );
 }
@@ -113,6 +113,8 @@ function onLocationFound( e ) {
         userMarker = L.marker( e.latlng, { icon: L.icon( { iconUrl: 'gps_icon.png', iconSize: [32, 32] } ) } ).addTo( map );
     }
     console.log( "User location updated:", e.latlng );
+
+    map.stopLocate();
 }
 
 
@@ -195,6 +197,9 @@ async function route( startCoords, endCoords ) {
 
     if ( routingLayer ) routingLayer.remove();
 
+    alert( "Navi called from \n" + startCoords + "\nto\n" + endCoords + "\nbut navi disabled to limit API calls" );
+    return; // temp. disable route to limit api calls TODO remove me don't forget pls
+
     const url = `https://graphhopper.com/api/1/route?point=${startCoords[0]},${startCoords[1]}&point=${endCoords[0]},${endCoords[1]}&vehicle=foot&locale=en&key=${apiKey}`;
     console.log( "Routing URL:", url );
 
@@ -240,13 +245,7 @@ async function route( startCoords, endCoords ) {
 }
 
 
-
-
-// Event listener for the route button
-document.getElementById( 'routeBtn' ).addEventListener( 'click', async () => {
-    const startAddress = document.getElementById( 'start' ).value.trim();
-    const endAddress = document.getElementById( 'end' ).value.trim();
-
+async function startNavigation( startAddress, endAddress ) {
     // Check if an end address is provided
     if ( !endAddress ) {
         alert( "Please enter a destination address." );
@@ -277,6 +276,24 @@ document.getElementById( 'routeBtn' ).addEventListener( 'click', async () => {
         console.log( "End coordinates:", endCoords );
         await route( startCoords, endCoords );
     }
+}
+
+async function startNavigationByLocation( a, b ) {
+    if ( !userMarker ) {
+        alert( "Unable to determine your current location. Please enable location services." );
+        return;
+    }
+    const startLoc = userMarker.getLatLng();
+    await route( [startLoc.lat, startLoc.lng], [a, b] );
+}
+
+
+// Event listener for the route button
+document.getElementById( 'routeBtn' ).addEventListener( 'click', async () => {
+    const startAddress = document.getElementById( 'start' ).value.trim();
+    const endAddress = document.getElementById( 'end' ).value.trim();
+
+    startNavigation( startAddress, endAddress );
 } );
 
 // Event listener for the cancel route button
@@ -353,27 +370,43 @@ initializeMap();
 const popup = L.popup()
     .setContent( 'I am a standalone popup.' );
 
-function onLocationFound( e ) {
-    var radius = e.accuracy;
-
-    L.marker( e.latlng ).addTo( map )
-        .bindPopup( "You are within " + radius + " meters from this point" ).openPopup();
-
-    L.circle( e.latlng, radius ).addTo( map );
-}
+const buildingPopup = L.popup().setContent( "Default building " );
 
 function getCurrentLocation() {
-    map.locate( { setView: true, maxZoom: 16 } );
+    map.locate( { setView: true, maxZoom: 16, watch: true } );
 }
 
 map.on( 'locationfound', onLocationFound );
 map.on( 'click', onMapClick );
 
 function onMapClick( e ) {
-    popup
-        .setLatLng( e.latlng )
-        .setContent( `You clicked the map at ${e.latlng.toString()}` )
-        .openOn( map );
+    const clickedLocation = e.latlng;
+    let closestBuilding = null;
+    let minDistance = Infinity;
+    const maxDistance = 100; // in meters, if no known building within this distance, place pin
+
+    // try to find building closest to the clicked location
+    for ( const buildingName in uicBuildings ) {
+        const buildingCoords = uicBuildings[buildingName];
+        const buildingLocation = L.latLng( buildingCoords[0], buildingCoords[1] );
+
+        // Calculate distance from the clicked location to the building
+        const distance = clickedLocation.distanceTo( buildingLocation );
+
+        // If the building is closer and within the max distance, update closestBuilding
+        if ( distance < minDistance && distance <= maxDistance ) {
+            closestBuilding = buildingName;
+            minDistance = distance;
+        }
+    }
+
+    // If no closest building, show the picked location
+    if ( !closestBuilding ) {
+        showPopupAtDest( [clickedLocation.lat, clickedLocation.lng], "Selected location" );
+    }
+    else {
+        showPopupAtDest( uicBuildings[closestBuilding], closestBuilding );
+    }
 }
 
 function populateBuildingsMenu() {
@@ -396,9 +429,32 @@ function populateBuildingsMenu() {
         </div>
       `;
 
-        // Append the link to the menuDiv
         menuDiv.appendChild( link );
     }
 }
 
 populateBuildingsMenu();
+
+function showPopupAtDest( selectedDest, name ) {
+    const popupContent = `
+    <div>
+        <h3>${name}</h3>
+        <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+    </div>
+`;
+
+    const marker = L.marker( [selectedDest[0], selectedDest[1]] ).bindPopup( popupContent ).addTo( map ).openPopup();
+
+    marker.on( 'popupclose', function () {
+        marker.remove();
+    } );
+}
+
+// called when we want to start navigating to some point
+// shows destination on map and offers to start nav.
+async function onDestinationPicked( destination ) {
+    const selectedDest = await geocodeAddress( destination );
+    map.setView( [selectedDest[0], selectedDest[1]], 20 );
+
+    showPopupAtDest( selectedDest, destination );
+}
