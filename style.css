@@ -38,19 +38,6 @@ html {
     width: 100%;
 }
 
-#social {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-}
-
-#social button {
-    display: block;
-    margin-bottom: 10px;
-    padding: 8px;
-}
-
 #favoritesList {
     background-color: white;
     padding: 10px;
@@ -58,99 +45,11 @@ html {
     overflow-y: auto;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
-}
-
-.modal-content input,
-.modal-content textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-}
-
-.modal-content button {
-    padding: 8px;
-}
-
 /* UIC Themed Styles */
-body.social-page {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
-#social-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
 
 .uic-logo {
     height: 80px;
     margin-bottom: 10px;
-}
-
-#event-form {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-#event-form input,
-#event-form textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-#event-form button {
-    background-color: #d32f2f;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#event-form button:hover {
-    background-color: #c62828;
-}
-
-#event-board {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.event-tile {
-    background-color: #1a73e8;
-    color: white;
-    border-radius: 8px;
-    padding: 20px;
-    width: calc(33.33% - 20px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.event-tile h3 {
-    margin-top: 0;
-}
-
-.event-tile p {
-    margin: 5px 0;
 }
 
 #my-location {
