@@ -92,11 +92,11 @@ const uicBuildings = {
     "RRB": [41.867552652316014, -87.64614850944423]
 };
 
-// const uicPrinters =  {
-//     // UIC Wepa Printer locations and description
-//     "AEH 3220": [[41.8715810717739, -87.64944043434458], "All gender bathroom found on the West entrance of Lecture Center E"],
-//     "AHSB 5th Floor Station 1": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathroom found on the second floor, to the right of Dunkin'"],
-// }
+const uicPrinters =  {
+    // UIC Wepa Printer locations and description
+    "AEH 3220": [[41.8715810717739, -87.64944043434458], ""],
+    "AHSB 5th Floor Station 1": [[41.87235562453282, -87.64782201320713], ""],
+}
 
 // Initialize the map
 function initializeMap() {
