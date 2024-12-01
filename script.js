@@ -92,6 +92,12 @@ const uicBuildings = {
     "RRB": [41.867552652316014, -87.64614850944423]
 };
 
+// const uicPrinters =  {
+//     // UIC Wepa Printer locations and description
+//     "AEH 3220": [[41.8715810717739, -87.64944043434458], "All gender bathroom found on the West entrance of Lecture Center E"],
+//     "AHSB 5th Floor Station 1": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathroom found on the second floor, to the right of Dunkin'"],
+// }
+
 // Initialize the map
 function initializeMap() {
     map = L.map( 'map' ).setView( [defaultLat, defaultLng], defaultZoom );
@@ -316,62 +322,6 @@ document.getElementById( 'cancelBtn' ).addEventListener( 'click', () => {
     document.getElementById( 'start' ).value = '';
     document.getElementById( 'end' ).value = '';
 } );
-
-
-// Check if we're on the main page
-if ( document.getElementById( 'postEventBtn' ) ) {
-    // Add event listener to the "Post Event" button on the main page
-    document.getElementById( 'postEventBtn' ).addEventListener( 'click', () => {
-        window.location.href = 'social.html';
-    } );
-}
-
-// Check if we're on the social.html page
-if ( document.getElementById( 'addEventBtn' ) ) {
-    const eventBoard = document.getElementById( 'event-board' );
-    const storedEvents = JSON.parse( localStorage.getItem( 'uicEvents' ) ) || [];
-
-    // Load existing events from local storage
-    storedEvents.forEach( event => addEventToBoard( event ) );
-
-    // Add event listener to the "Add Event" button on social.html page
-    document.getElementById( 'addEventBtn' ).addEventListener( 'click', () => {
-        const title = document.getElementById( 'eventTitle' ).value.trim();
-        const description = document.getElementById( 'eventDescription' ).value.trim();
-        const location = document.getElementById( 'eventLocation' ).value.trim();
-
-        if ( title && description && location ) {
-            const event = { title, description, location };
-            addEventToBoard( event );
-            saveEvent( event );
-
-            // Clear the form fields after saving
-            document.getElementById( 'eventTitle' ).value = '';
-            document.getElementById( 'eventDescription' ).value = '';
-            document.getElementById( 'eventLocation' ).value = '';
-        } else {
-            alert( "Please fill out all fields." );
-        }
-    } );
-
-    // Function to add an event to the event board
-    function addEventToBoard( event ) {
-        const eventTile = document.createElement( 'div' );
-        eventTile.className = 'event-tile';
-        eventTile.innerHTML = `
-            <h3>${event.title}</h3>
-            <p>${event.description}</p>
-            <p><strong>Location:</strong> ${event.location}</p>
-        `;
-        eventBoard.appendChild( eventTile );
-    }
-
-    // Function to save the event to local storage
-    function saveEvent( event ) {
-        storedEvents.push( event );
-        localStorage.setItem( 'uicEvents', JSON.stringify( storedEvents ) );
-    }
-}
 
 initializeMap();
 
