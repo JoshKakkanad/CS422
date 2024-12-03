@@ -98,17 +98,17 @@ const uicBuildingsBack = uicBuildings; // to make custom favorites work, hacky w
 
 const uicPrinters = {
     // UIC Wepa Printer locations and description
-    "TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
-    "MRH 156": [[41.86462837094461, -87.64740049817358], ""],
-    "SELE 2265": [[41.870517167586044, -87.64798946133658], ""],
+    //"TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
+    //"MRH 156": [[41.86462837094461, -87.64740049817358], ""],
+    //"SELE 2265": [[41.870517167586044, -87.64798946133658], ""],
     "SCE 1st Floor West Lobby": [[41.871698383936824, -87.6481393269936], "Wepa printer near the West entrance of SCE. Near the ID Center."]
 }
 
 const uicBathrooms = {
     // UIC Bathroom locations and description
     "LCE Bathroom": [[41.8715810717739, -87.64944043434458], "All-gender bathroom can be found at the West entrance of Lecture Center E building."],
-    "SCE Bathroom": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathrooms can be found on the second floor, to the right of the Dunkin'."],
-    "TBH Bathroom": [[41.866471752650234, -87.64732562639999], "Men's and Women's bathrooms can be found to the left of the front desk."]
+    //"SCE Bathroom": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathrooms can be found on the second floor, to the right of the Dunkin'."],
+    //"TBH Bathroom": [[41.866471752650234, -87.64732562639999], "Men's and Women's bathrooms can be found to the left of the front desk."]
 }
 
 const uicBuildingsAmenities = {
