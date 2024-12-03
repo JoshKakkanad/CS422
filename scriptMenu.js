@@ -74,6 +74,7 @@ searchInput.addEventListener( 'input', () => {
                 onDestinationPicked( suggestion );
                 searchInput.value = "";
                 suggestionsList.innerHTML = '';
+                document.getElementById( 'end' ).value = suggestion;
             } );
             suggestionsList.appendChild( li );
         } );

@@ -61,6 +61,9 @@ function removeFavorite( event, name ) {
 }
 
 function addFavorites( long, lat, name ) {
+  //prevent adding random pins as this functionality is broken
+  if ( name == "Selected location" ) return;
+
   // add only if doesn't exist
   if ( !favoriteBuildings[name] ) {
     favoriteBuildings[name] = [lat, long];

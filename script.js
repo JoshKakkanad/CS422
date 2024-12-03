@@ -418,15 +418,21 @@ function showPopupAtDest( selectedDest, name ) {
         imgSrc = "images/fav-icon-added.png";
     }
 
+    var button = `
+        <button class="remove-button-fav" onclick="addFavorites(${selectedDest[0]}, ${selectedDest[1]}, '${name}')">
+            <img src="${imgSrc}" class="add-to-fav-icon-button">
+        </button>
+    `;
+
+    // prevent adding random pins to fav as this is broken
+    if ( name == "Selected location" ) button = "";
 
     const popupContent = `
     <div class="popup-content">
         <h3>${name}</h3>
         <div class="popup-buttons">
             <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
-            <button class="remove-button-fav" onclick="addFavorites(${selectedDest[0]}, ${selectedDest[1]}, '${name}')">
-                <img src="${imgSrc}" class="add-to-fav-icon-button">
-            </button>
+            ${button}            
         </div>
     </div>
 `;
