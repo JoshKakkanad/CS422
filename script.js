@@ -92,7 +92,7 @@ const uicBuildings = {
     "RRB": [41.867552652316014, -87.64614850944423]
 };
 
-const uicPrinters =  {
+const uicPrinters = {
     // UIC Wepa Printer locations and description
     "TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
     "MRH 156": [[41.86462837094461, -87.64740049817358], ""],
@@ -100,7 +100,7 @@ const uicPrinters =  {
     "SCE 1st Floor West Lobby": [[41.871698383936824, -87.6481393269936], "Wepa printer near the West entrance of SCE. Near the ID Center."]
 }
 
-const uicBathrooms =  {
+const uicBathrooms = {
     // UIC Bathroom locations and description
     "LCE Bathroom": [[41.8715810717739, -87.64944043434458], "All-gender bathroom can be found at the West entrance of Lecture Center E building."],
     "SCE Bathroom": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathrooms can be found on the second floor, to the right of the Dunkin'."],
@@ -392,6 +392,7 @@ function populateBuildingsMenu() {
             document.getElementById( 'end' ).value = name;
             closeFavorites();
             navigateButtonClick();
+            showPopupAtDest( uicBuildings[name], name );
         };
 
         // Set the inner HTML of the link to show the building's name
@@ -407,15 +408,33 @@ function populateBuildingsMenu() {
 
 populateBuildingsMenu();
 
+/*
+    Shows the popup at given location on the map
+*/
 function showPopupAtDest( selectedDest, name ) {
+    var imgSrc = "images/fav-icon.png";
+
+    if ( favoriteBuildings[name] ) {
+        imgSrc = "images/fav-icon-added.png";
+    }
+
+
     const popupContent = `
-    <div>
+    <div class="popup-content">
         <h3>${name}</h3>
-        <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+        <div class="popup-buttons">
+            <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+            <button class="remove-button-fav" onclick="addFavorites(${selectedDest[0]}, ${selectedDest[1]}, '${name}')">
+                <img src="${imgSrc}" class="add-to-fav-icon-button">
+            </button>
+        </div>
     </div>
 `;
 
-    const marker = L.marker( [selectedDest[0], selectedDest[1]] ).bindPopup( popupContent ).addTo( map ).openPopup();
+    const marker = L.marker( [selectedDest[0], selectedDest[1]] )
+        .bindPopup( popupContent )
+        .addTo( map )
+        .openPopup();
 
     marker.on( 'popupclose', function () {
         marker.remove();
@@ -433,32 +452,32 @@ async function onDestinationPicked( destination ) {
 
 
 // Function to calculate the Haversine distance between two coordinates
-function haversineDistance(coord1, coord2) {
-    const toRad = (deg) => deg * Math.PI / 180;
+function haversineDistance( coord1, coord2 ) {
+    const toRad = ( deg ) => deg * Math.PI / 180;
 
     const [lat1, lon1] = coord1;
     const [lat2, lon2] = coord2;
 
     const R = 6371e3; // Radius of the Earth in meters
-    const φ1 = toRad(lat1);
-    const φ2 = toRad(lat2);
-    const Δφ = toRad(lat2 - lat1);
-    const Δλ = toRad(lon2 - lon1);
+    const φ1 = toRad( lat1 );
+    const φ2 = toRad( lat2 );
+    const Δφ = toRad( lat2 - lat1 );
+    const Δλ = toRad( lon2 - lon1 );
 
-    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const a = Math.sin( Δφ / 2 ) ** 2 + Math.cos( φ1 ) * Math.cos( φ2 ) * Math.sin( Δλ / 2 ) ** 2;
+    const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
 
     return R * c; // Distance in meters
 }
 
 // Function to find the nearest poi
-function findNearest(currentLocation, poiDict) {
+function findNearest( currentLocation, poiDict ) {
     let nearestPrinter = null;
     let shortestDistance = Infinity;
 
-    for (const [printerName, [coords]] of Object.entries(poiDict)) {
-        const distance = haversineDistance(currentLocation, coords);
-        if (distance < shortestDistance) {
+    for ( const [printerName, [coords]] of Object.entries( poiDict ) ) {
+        const distance = haversineDistance( currentLocation, coords );
+        if ( distance < shortestDistance ) {
             shortestDistance = distance;
             nearestPrinter = { name: printerName, coords };
         }
@@ -468,36 +487,36 @@ function findNearest(currentLocation, poiDict) {
 }
 
 // Routes to nearest poi based on button input
-function routeToNearest(poi) {
+function routeToNearest( poi ) {
     // Assume we have the user's current location (latitude and longitude)
-    if (poi === "printer") {
+    if ( poi === "printer" ) {
         poiDict = uicPrinters;
-    } else if (poi === "bathroom"){
+    } else if ( poi === "bathroom" ) {
         poiDict = uicBathrooms;
     }
 
     navigator.geolocation.getCurrentPosition(
-        (position) => {
+        ( position ) => {
             const userLocation = [position.coords.latitude, position.coords.longitude];
-            const nearest = findNearest(userLocation, poiDict);
+            const nearest = findNearest( userLocation, poiDict );
 
-            if (nearest) {
-                startNavigationByLocation(nearest.coords[0], nearest.coords[1]);
+            if ( nearest ) {
+                startNavigationByLocation( nearest.coords[0], nearest.coords[1] );
             } else {
-                alert(`No ${poi} found.`);
+                alert( `No ${poi} found.` );
             }
         },
-        (error) => {
-            console.error("Error getting location:", error);
-            alert("Could not retrieve your location. Please try again.");
+        ( error ) => {
+            console.error( "Error getting location:", error );
+            alert( "Could not retrieve your location. Please try again." );
         }
     );
 }
 
-document.getElementById("routeToPrinterButton").addEventListener("click", () => {
-    routeToNearest("printer");
-});
+document.getElementById( "routeToPrinterButton" ).addEventListener( "click", () => {
+    routeToNearest( "printer" );
+} );
 
-document.getElementById("routeToBathroomButton").addEventListener("click", () => {
-    routeToNearest("bathroom");
-});
+document.getElementById( "routeToBathroomButton" ).addEventListener( "click", () => {
+    routeToNearest( "bathroom" );
+} );
