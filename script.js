@@ -109,6 +109,18 @@ const uicBathrooms = {
     "TBH Bathroom": [[41.866471752650234, -87.64732562639999], "Men's and Women's bathrooms can be found to the left of the front desk."]
 }
 
+const uicBuildingsAmenities = {
+    "Student Center East": ["building-images/student-center-east.png", `
+        <h5>Available amenities:</h5>
+        <ul>
+            <li>Bathrooms</li>
+            <li>Printers</li>
+            <li>Commons Dining Hal</li>
+            <li>Sushi Do</li>
+        </ul>
+        `]
+}
+
 // Initialize the map
 function initializeMap() {
     map = L.map( 'map' ).setView( [defaultLat, defaultLng], defaultZoom );
@@ -417,6 +429,7 @@ function showPopupAtDest( selectedDest, name ) {
     // figure out add-to-fav button icon
     var imgSrc = "images/fav-icon.png";
     var inputField = "";
+    var buildingInfo = "";
 
     // if building is not know / random pin on the map, name == "Selected location"
     if ( name == "Selected location" ) {
@@ -426,7 +439,7 @@ function showPopupAtDest( selectedDest, name ) {
         else {
             // if some custom pin not on the list, also display the input field for custom name
             inputField = `
-                <input type="text" class="user-fav-name-input" id="user-fav-name-input" placeholder="Add a name to add to favorites">
+                <input type="text" class="user-fav-name-input" id="user-fav-name-input" placeholder="Enter custom pin name">
             `;
         }
 
@@ -441,10 +454,21 @@ function showPopupAtDest( selectedDest, name ) {
         </button>
     `;
 
+    if ( uicBuildingsAmenities[name] ) {
+        var buildingImgSrc = uicBuildingsAmenities[name][0];
+        var buildingDescription = uicBuildingsAmenities[name][1];
+
+        buildingInfo = `
+            <img src="${buildingImgSrc}" class="popup-building-img">
+            ${buildingDescription}
+        `;
+    }
+
     const popupContent = `
     <div class="popup-content">
         <h3>${name}</h3>
         ${inputField}
+        ${buildingInfo}
         <div class="popup-buttons">
             <button class="popup-button" id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
             ${button}            
