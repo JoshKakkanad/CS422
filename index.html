@@ -15,18 +15,6 @@
 <body>
     <!-- Side menu that shows up after pressing the "menu" button -->
     <div id="sideMenu" class="side-menu">
-        <a href="#" onclick="homeButtonClick()">
-            <div class="button-container"><img src="images/sidemenu-home.png">Home</div>
-        </a>
-        <a href="#" onclick="navigateButtonClick()">
-            <div class="button-container"><img src="images/sidemenu-map.png">Navigate</div>
-        </a>
-        <a href="#">
-            <div class="button-container"><img src="images/sidemenu-social.png">Social</div>
-        </a>
-        <a href="#">
-            <div class="button-container"><img src="images/sidemenu-events.png">Events</div>
-        </a>
         <a href="#" onclick="showFavorites()">
             <div class="button-container"><img src="images/sidemenu-fav.png">Favorites</div>
         </a>
@@ -58,7 +46,10 @@
                 <img src="images/sidemenu-home-black.png" class="buttonImg">
             </button>
             <button>
-                <img src="images/topbar-triangle.png" class="buttonImg">
+                <img src="images/printer-icon.png" class="buttonImg" id="routeToPrinterButton">
+            </button>
+            <button>
+                <img src="images/toilet-icon.png" class="buttonImg" id="routeToBathroomButton">
             </button>
             <div class="search-wrapper">
                 <input type="search" id="search" placeholder="Search here" autocomplete="off">
@@ -66,7 +57,6 @@
             </div>
             <ul id="suggestions-list"></ul>
         </div>
-        <!-- <div class="title">UIC Navigator</div> -->
 
         <div class="logo">
             <img src="images/topbar-logo.png" alt="Logo">
@@ -82,26 +72,8 @@
         <button id="cancelBtn">Cancel Route</button>
     </div>
 
-    <!-- Social and favorite locations section -->
-    <!-- <div id="social">
-        <button id="postEventBtn">Post Event</button>
-        <button id="favoritesBtn">Show Favorites</button>
-        <div id="favoritesList"></div>
-    </div> -->
-
     <!-- Map container -->
     <div id="map"></div>
-
-    <!-- Event Posting Modal -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <h2>Post Event</h2>
-            <input type="text" id="eventName" placeholder="Event Name">
-            <textarea id="eventDescription" placeholder="Event Description"></textarea>
-            <button id="saveEventBtn">Save Event</button>
-            <button id="closeModalBtn">Close</button>
-        </div>
-    </div>
 
     <div id="my-location">
         <img src="images/icon-my-location.png" onclick="getCurrentLocation()">

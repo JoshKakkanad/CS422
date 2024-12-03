@@ -15,6 +15,9 @@ function showSideMenu() {
 function closeSideMenu() {
     document.getElementById( "sideMenu" ).style.width = "0px";
     document.getElementById( "overlay" ).style.display = "none";
+    setTimeout(function() {
+        document.getElementById( "sidebar" ).style.display = "block";
+    }, 200);
 }
 
 function showFavorites() {
@@ -32,6 +35,9 @@ function closeFavorites() {
 function showBuildings() {
     closeFavorites();
     closeSideMenu();
+    setTimeout(function() {
+        document.getElementById( "sidebar" ).style.display = "none";
+    }, 200);
     document.getElementById( "buildings-menu" ).style.width = "350px";
 }
 
@@ -88,3 +94,5 @@ clearBtn.addEventListener( 'click', () => {
     suggestionsList.innerHTML = '';
     clearBtn.style.display = 'none';
 } );
+
+navigateButtonClick();

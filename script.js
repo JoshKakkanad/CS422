@@ -92,6 +92,21 @@ const uicBuildings = {
     "RRB": [41.867552652316014, -87.64614850944423]
 };
 
+const uicPrinters =  {
+    // UIC Wepa Printer locations and description
+    "TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
+    "MRH 156": [[41.86462837094461, -87.64740049817358], ""],
+    "SELE 2265": [[41.870517167586044, -87.64798946133658], ""],
+    "SCE 1st Floor West Lobby": [[41.871698383936824, -87.6481393269936], "Wepa printer near the West entrance of SCE. Near the ID Center."]
+}
+
+const uicBathrooms =  {
+    // UIC Bathroom locations and description
+    "LCE Bathroom": [[41.8715810717739, -87.64944043434458], "All-gender bathroom can be found at the West entrance of Lecture Center E building."],
+    "SCE Bathroom": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathrooms can be found on the second floor, to the right of the Dunkin'."],
+    "TBH Bathroom": [[41.866471752650234, -87.64732562639999], "Men's and Women's bathrooms can be found to the left of the front desk."]
+}
+
 // Initialize the map
 function initializeMap() {
     map = L.map( 'map' ).setView( [defaultLat, defaultLng], defaultZoom );
@@ -201,8 +216,8 @@ async function route( startCoords, endCoords ) {
 
     if ( routingLayer ) routingLayer.remove();
 
-    alert( "Navi called from \n" + startCoords + "\nto\n" + endCoords + "\nbut navi disabled to limit API calls" );
-    return; // temp. disable route to limit api calls TODO remove me don't forget pls
+    // alert( "Navi called from \n" + startCoords + "\nto\n" + endCoords + "\nbut navi disabled to limit API calls" );
+    // return; // temp. disable route to limit api calls TODO remove me don't forget pls
 
     const url = `https://graphhopper.com/api/1/route?point=${startCoords[0]},${startCoords[1]}&point=${endCoords[0]},${endCoords[1]}&vehicle=foot&locale=en&key=${apiKey}`;
     console.log( "Routing URL:", url );
@@ -317,62 +332,6 @@ document.getElementById( 'cancelBtn' ).addEventListener( 'click', () => {
     document.getElementById( 'end' ).value = '';
 } );
 
-
-// Check if we're on the main page
-if ( document.getElementById( 'postEventBtn' ) ) {
-    // Add event listener to the "Post Event" button on the main page
-    document.getElementById( 'postEventBtn' ).addEventListener( 'click', () => {
-        window.location.href = 'social.html';
-    } );
-}
-
-// Check if we're on the social.html page
-if ( document.getElementById( 'addEventBtn' ) ) {
-    const eventBoard = document.getElementById( 'event-board' );
-    const storedEvents = JSON.parse( localStorage.getItem( 'uicEvents' ) ) || [];
-
-    // Load existing events from local storage
-    storedEvents.forEach( event => addEventToBoard( event ) );
-
-    // Add event listener to the "Add Event" button on social.html page
-    document.getElementById( 'addEventBtn' ).addEventListener( 'click', () => {
-        const title = document.getElementById( 'eventTitle' ).value.trim();
-        const description = document.getElementById( 'eventDescription' ).value.trim();
-        const location = document.getElementById( 'eventLocation' ).value.trim();
-
-        if ( title && description && location ) {
-            const event = { title, description, location };
-            addEventToBoard( event );
-            saveEvent( event );
-
-            // Clear the form fields after saving
-            document.getElementById( 'eventTitle' ).value = '';
-            document.getElementById( 'eventDescription' ).value = '';
-            document.getElementById( 'eventLocation' ).value = '';
-        } else {
-            alert( "Please fill out all fields." );
-        }
-    } );
-
-    // Function to add an event to the event board
-    function addEventToBoard( event ) {
-        const eventTile = document.createElement( 'div' );
-        eventTile.className = 'event-tile';
-        eventTile.innerHTML = `
-            <h3>${event.title}</h3>
-            <p>${event.description}</p>
-            <p><strong>Location:</strong> ${event.location}</p>
-        `;
-        eventBoard.appendChild( eventTile );
-    }
-
-    // Function to save the event to local storage
-    function saveEvent( event ) {
-        storedEvents.push( event );
-        localStorage.setItem( 'uicEvents', JSON.stringify( storedEvents ) );
-    }
-}
-
 initializeMap();
 
 const popup = L.popup()
@@ -471,3 +430,74 @@ async function onDestinationPicked( destination ) {
 
     showPopupAtDest( selectedDest, destination );
 }
+
+
+// Function to calculate the Haversine distance between two coordinates
+function haversineDistance(coord1, coord2) {
+    const toRad = (deg) => deg * Math.PI / 180;
+
+    const [lat1, lon1] = coord1;
+    const [lat2, lon2] = coord2;
+
+    const R = 6371e3; // Radius of the Earth in meters
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distance in meters
+}
+
+// Function to find the nearest poi
+function findNearest(currentLocation, poiDict) {
+    let nearestPrinter = null;
+    let shortestDistance = Infinity;
+
+    for (const [printerName, [coords]] of Object.entries(poiDict)) {
+        const distance = haversineDistance(currentLocation, coords);
+        if (distance < shortestDistance) {
+            shortestDistance = distance;
+            nearestPrinter = { name: printerName, coords };
+        }
+    }
+
+    return nearestPrinter;
+}
+
+// Routes to nearest poi based on button input
+function routeToNearest(poi) {
+    // Assume we have the user's current location (latitude and longitude)
+    if (poi === "printer") {
+        poiDict = uicPrinters;
+    } else if (poi === "bathroom"){
+        poiDict = uicBathrooms;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const userLocation = [position.coords.latitude, position.coords.longitude];
+            const nearest = findNearest(userLocation, poiDict);
+
+            if (nearest) {
+                startNavigationByLocation(nearest.coords[0], nearest.coords[1]);
+            } else {
+                alert(`No ${poi} found.`);
+            }
+        },
+        (error) => {
+            console.error("Error getting location:", error);
+            alert("Could not retrieve your location. Please try again.");
+        }
+    );
+}
+
+document.getElementById("routeToPrinterButton").addEventListener("click", () => {
+    routeToNearest("printer");
+});
+
+document.getElementById("routeToBathroomButton").addEventListener("click", () => {
+    routeToNearest("bathroom");
+});
