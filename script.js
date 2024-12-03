@@ -126,6 +126,20 @@ const uicBuildingsAmenities = {
             <li>Chick-fil-A - Located on 1st Floor</li>
         </ul>
         `],
+    "SCE": ["building-images/student-center-east.png", `
+        <h5>Available amenities:</h5>
+        <ul>
+            <li>Bathrooms</li>
+            <li>Printers</li>
+            <li>Commons Dining Hal</li>
+            <li>Market / grocery store - Located on 2nd Floor</li>
+            <li>Dunkin’ Donuts - Located on 1st Floor</li>
+            <li>Moe's Southwest Grill - Located on 2nd Floor</li>
+            <li>Panda Express - Located on 1st Floor</li>
+            <li>Subway - Located on 2nd Floor</li>
+            <li>Chick-fil-A - Located on 1st Floor</li>
+        </ul>
+        `],
     "Lecture Center Building A": ["building-images/lca.png", "Lecture Center A is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
     "Lecture Center Building B": ["building-images/lcb.png", "Lecture Center B is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
     "Lecture Center Building C": ["building-images/lcc.png", "Lecture Center C is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
