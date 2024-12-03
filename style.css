@@ -107,3 +107,11 @@ html {
 .add-to-fav-icon-button {
     width: 20px;
 }
+
+.popup-button {
+    cursor: pointer;
+}
+
+.user-fav-name-input {
+    width: 100%;
+}

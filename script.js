@@ -92,6 +92,8 @@ const uicBuildings = {
     "RRB": [41.867552652316014, -87.64614850944423]
 };
 
+const uicBuildingsBack = uicBuildings; // to make custom favorites work, hacky workaround but it's late to forgive me
+
 const uicPrinters = {
     // UIC Wepa Printer locations and description
     "TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
@@ -412,26 +414,39 @@ populateBuildingsMenu();
     Shows the popup at given location on the map
 */
 function showPopupAtDest( selectedDest, name ) {
+    // figure out add-to-fav button icon
     var imgSrc = "images/fav-icon.png";
+    var inputField = "";
 
-    if ( favoriteBuildings[name] ) {
+    // if building is not know / random pin on the map, name == "Selected location"
+    if ( name == "Selected location" ) {
+        if ( isLocationInList( selectedDest[0], selectedDest[1] ) ) {
+            imgSrc = "images/fav-icon-added.png";
+        }
+        else {
+            // if some custom pin not on the list, also display the input field for custom name
+            inputField = `
+                <input type="text" class="user-fav-name-input" id="user-fav-name-input" placeholder="Add a name to add to favorites">
+            `;
+        }
+
+    } else if ( favoriteBuildings[name] ) {
         imgSrc = "images/fav-icon-added.png";
     }
 
+    // regular button for known buildings
     var button = `
         <button class="remove-button-fav" onclick="addFavorites(${selectedDest[0]}, ${selectedDest[1]}, '${name}')">
             <img src="${imgSrc}" class="add-to-fav-icon-button">
         </button>
     `;
 
-    // prevent adding random pins to fav as this is broken
-    if ( name == "Selected location" ) button = "";
-
     const popupContent = `
     <div class="popup-content">
         <h3>${name}</h3>
+        ${inputField}
         <div class="popup-buttons">
-            <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+            <button class="popup-button" id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
             ${button}            
         </div>
     </div>

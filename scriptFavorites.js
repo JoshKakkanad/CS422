@@ -56,17 +56,34 @@ function removeFavorite( event, name ) {
     menuDiv.removeChild( linkToRemove );
   }
 
-  // also remove from favoriteBuildings if necessary
   delete favoriteBuildings[name];
+
+  // also remove from uicBuildings if it's a custom pin
+  if ( !uicBuildingsBack[name] ) {
+    delete uicBuildings[name];
+  }
 }
 
 function addFavorites( long, lat, name ) {
-  //prevent adding random pins as this functionality is broken
-  if ( name == "Selected location" ) return;
+  // if adding custom location
+  if ( name == "Selected location" ) {
+    name = document.getElementById( "user-fav-name-input" ).value;
+
+    // if no name given, generate random
+    if ( name == null || name == "" ) {
+      var i = 1;
+      while ( favoriteBuildings["Custom pin " + i] ) {
+        i++;
+      }
+      name = "Custom pin " + i;
+    }
+
+    uicBuildings[name] = [long, lat];
+  }
 
   // add only if doesn't exist
   if ( !favoriteBuildings[name] ) {
-    favoriteBuildings[name] = [lat, long];
+    favoriteBuildings[name] = [long, lat];
   } else {
     delete favoriteBuildings[name];
   }
@@ -76,5 +93,27 @@ function addFavorites( long, lat, name ) {
   // also re-create the popup to show new updated icon
   showPopupAtDest( [long, lat], name );
 }
+
+/*
+  Returns true/false depending if some location is saved to favorites
+  (instead of using the building's name)
+
+  Use it for randomly placed pins and favorites.
+*/
+function isLocationInList( lat, long ) {
+  const tolerance = 0.0001;
+
+  for ( const [name, coordinates] of Object.entries( favoriteBuildings ) ) {
+    const [storedLat, storedLong] = coordinates;
+
+    // Check if the latitude and longitude are approximately equal
+    if ( Math.abs( storedLat - lat ) < tolerance && Math.abs( storedLong - long ) < tolerance ) {
+      return true; // Location is in the list
+    }
+  }
+
+  return false;
+}
+
 
 refreshFavoriteList();
