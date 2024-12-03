@@ -89,10 +89,14 @@ const uicBuildings = {
     "Physical Education Building": [41.86680481405539, -87.64941632243408],
     "PEB": [41.86680481405539, -87.64941632243408],
     "Roosevelt Road Building": [41.867552652316014, -87.64614850944423],
-    "RRB": [41.867552652316014, -87.64614850944423]
+    "RRB": [41.867552652316014, -87.64614850944423],
+    "Thomas Beckham Hall": [41.86626111882355, -87.64724135398865],
+    "TBH": [41.86626111882355, -87.64724135398865]
 };
 
-const uicPrinters =  {
+const uicBuildingsBack = uicBuildings; // to make custom favorites work, hacky workaround but it's late to forgive me
+
+const uicPrinters = {
     // UIC Wepa Printer locations and description
     "TBH Front Desk": [[41.86648723286237, -87.64730349817728], "Wepa printer can be found to the left of the front desk."],
     "MRH 156": [[41.86462837094461, -87.64740049817358], ""],
@@ -100,11 +104,64 @@ const uicPrinters =  {
     "SCE 1st Floor West Lobby": [[41.871698383936824, -87.6481393269936], "Wepa printer near the West entrance of SCE. Near the ID Center."]
 }
 
-const uicBathrooms =  {
+const uicBathrooms = {
     // UIC Bathroom locations and description
     "LCE Bathroom": [[41.8715810717739, -87.64944043434458], "All-gender bathroom can be found at the West entrance of Lecture Center E building."],
     "SCE Bathroom": [[41.87235562453282, -87.64782201320713], "Men's and Women's bathrooms can be found on the second floor, to the right of the Dunkin'."],
     "TBH Bathroom": [[41.866471752650234, -87.64732562639999], "Men's and Women's bathrooms can be found to the left of the front desk."]
+}
+
+const uicBuildingsAmenities = {
+    "Student Center East": ["building-images/student-center-east.png", `
+        <h5>Available amenities:</h5>
+        <ul>
+            <li>Bathrooms</li>
+            <li>Printers</li>
+            <li>Commons Dining Hal</li>
+            <li>Market / grocery store - Located on 2nd Floor</li>
+            <li>Dunkin’ Donuts - Located on 1st Floor</li>
+            <li>Moe's Southwest Grill - Located on 2nd Floor</li>
+            <li>Panda Express - Located on 1st Floor</li>
+            <li>Subway - Located on 2nd Floor</li>
+            <li>Chick-fil-A - Located on 1st Floor</li>
+        </ul>
+        `],
+    "SCE": ["building-images/student-center-east.png", `
+        <h5>Available amenities:</h5>
+        <ul>
+            <li>Bathrooms</li>
+            <li>Printers</li>
+            <li>Commons Dining Hal</li>
+            <li>Market / grocery store - Located on 2nd Floor</li>
+            <li>Dunkin’ Donuts - Located on 1st Floor</li>
+            <li>Moe's Southwest Grill - Located on 2nd Floor</li>
+            <li>Panda Express - Located on 1st Floor</li>
+            <li>Subway - Located on 2nd Floor</li>
+            <li>Chick-fil-A - Located on 1st Floor</li>
+        </ul>
+        `],
+    "Lecture Center Building A": ["building-images/lca.png", "Lecture Center A is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building B": ["building-images/lcb.png", "Lecture Center B is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building C": ["building-images/lcc.png", "Lecture Center C is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building D": ["building-images/lcd.png", "Lecture Center D is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building E": ["building-images/lce.png", "Lecture Center E is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCA": ["building-images/lca.png", "Lecture Center A is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCB": ["building-images/lcb.png", "Lecture Center B is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCC": ["building-images/lcc.png", "Lecture Center C is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCD": ["building-images/lcd.png", "Lecture Center D is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCE": ["building-images/lce.png", "Lecture Center E is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Daley Library": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "LIB": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "Library": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "Academic & Residential Complex": ["building-images/arc.png", "The new Academic and Residential Complex (ARC) is a public private partnership between UIC and American Campus Communities (ACC). As part of a master plan to address the university¿s increasing enrollment, this new living-learning community features a 10-story, 146,000-square-foot residence hall with 548 beds in traditional dorm rooms and semi-suite style units. A two-story, 54,000-square-foot academic center on the west side of ARC holds three large tiered lecture halls, active learning classrooms, several small group study rooms, a tutoring center and multiple collaboration spaces."],
+    "ARC": ["building-images/arc.png", "The new Academic and Residential Complex (ARC) is a public private partnership between UIC and American Campus Communities (ACC). As part of a master plan to address the university¿s increasing enrollment, this new living-learning community features a 10-story, 146,000-square-foot residence hall with 548 beds in traditional dorm rooms and semi-suite style units. A two-story, 54,000-square-foot academic center on the west side of ARC holds three large tiered lecture halls, active learning classrooms, several small group study rooms, a tutoring center and multiple collaboration spaces."],
+    "TBH": ["building-images/tbh.png", "Thomas Beckham Hall has opened in August 2003 and is a student apartment building housing 450 upperclassmen students on the south side of campus. Thomas Beckham Hall was named after Thomas Beckham, who was the dean of the College of Associated Health Professions in 1982 when UIC was formed by the merger of the medical center and undergraduate campuses. "],
+    "Thomas Beckham Hall": ["building-images/tbh.png", "Thomas Beckham Hall has opened in August 2003 and is a student apartment building housing 450 upperclassmen students on the south side of campus. Thomas Beckham Hall was named after Thomas Beckham, who was the dean of the College of Associated Health Professions in 1982 when UIC was formed by the merger of the medical center and undergraduate campuses. "],
+    "Science & Engineering Laboratory East": ["building-images/sele.png", "Walter Netsch described the enormous Science and Engineering Laboratories as a city underneath a roof. Here the architect used bricks twice as large as those used in smaller campus buildings to express the size and strength of structures devoted to science and engineering. They are arranged to form an endless pattern of letter I on the building exterior. The dramatic ceiling arch between the east and west sides of these enormous buildings owes its height to the second-story walkway that has been removed."],
+    "SELE": ["building-images/sele.png", "Walter Netsch described the enormous Science and Engineering Laboratories as a city underneath a roof. Here the architect used bricks twice as large as those used in smaller campus buildings to express the size and strength of structures devoted to science and engineering. They are arranged to form an endless pattern of letter I on the building exterior. The dramatic ceiling arch between the east and west sides of these enormous buildings owes its height to the second-story walkway that has been removed."],
+    "Addams Hall": ["building-images/addams.png", "Addams Hall is a building in the Taft-Burnham-Addams cluster that was each named for an individual who seized Chicago as a place of opportunity. Loredo Taft was a sculptor, educator, and cultural leader. Architect Daniel H. Burnham, known to have said, “Make no little plans,” coordinated the 1893 World’s Columbian Exposition in Chicago."],
+    //"": ["building-images/.png", ""],
+
 }
 
 // Initialize the map
@@ -392,6 +449,7 @@ function populateBuildingsMenu() {
             document.getElementById( 'end' ).value = name;
             closeFavorites();
             navigateButtonClick();
+            showPopupAtDest( uicBuildings[name], name );
         };
 
         // Set the inner HTML of the link to show the building's name
@@ -407,19 +465,70 @@ function populateBuildingsMenu() {
 
 populateBuildingsMenu();
 
+/*
+    Shows the popup at given location on the map
+*/
 function showPopupAtDest( selectedDest, name ) {
+    // figure out add-to-fav button icon
+    var imgSrc = "images/fav-icon.png";
+    var inputField = "";
+    var buildingInfo = "";
+
+    // if building is not know / random pin on the map, name == "Selected location"
+    if ( name == "Selected location" ) {
+        if ( isLocationInList( selectedDest[0], selectedDest[1] ) ) {
+            imgSrc = "images/fav-icon-added.png";
+        }
+        else {
+            // if some custom pin not on the list, also display the input field for custom name
+            inputField = `
+                <input type="text" class="user-fav-name-input" id="user-fav-name-input" placeholder="Enter custom pin name">
+            `;
+        }
+
+    } else if ( favoriteBuildings[name] ) {
+        imgSrc = "images/fav-icon-added.png";
+    }
+
+    // regular button for known buildings
+    var button = `
+        <button class="remove-button-fav" onclick="addFavorites(${selectedDest[0]}, ${selectedDest[1]}, '${name}')">
+            <img src="${imgSrc}" class="add-to-fav-icon-button">
+        </button>
+    `;
+
+    if ( uicBuildingsAmenities[name] ) {
+        var buildingImgSrc = uicBuildingsAmenities[name][0];
+        var buildingDescription = uicBuildingsAmenities[name][1];
+
+        buildingInfo = `
+            <img src="${buildingImgSrc}" class="popup-building-img">
+            ${buildingDescription}
+        `;
+    }
+
     const popupContent = `
-    <div>
+    <div class="popup-content">
         <h3>${name}</h3>
-        <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+        ${inputField}
+        ${buildingInfo}
+        <div class="popup-buttons">
+            <button class="popup-button" id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+            ${button}            
+        </div>
     </div>
 `;
 
-    const marker = L.marker( [selectedDest[0], selectedDest[1]] ).bindPopup( popupContent ).addTo( map ).openPopup();
+    const marker = L.marker( [selectedDest[0], selectedDest[1]] )
+        .bindPopup( popupContent )
+        .addTo( map )
+        .openPopup();
 
     marker.on( 'popupclose', function () {
         marker.remove();
     } );
+
+    console.log( `Pin "${name}" created at: ${selectedDest[0]}, ${selectedDest[1]}` );
 }
 
 // called when we want to start navigating to some point
@@ -433,32 +542,32 @@ async function onDestinationPicked( destination ) {
 
 
 // Function to calculate the Haversine distance between two coordinates
-function haversineDistance(coord1, coord2) {
-    const toRad = (deg) => deg * Math.PI / 180;
+function haversineDistance( coord1, coord2 ) {
+    const toRad = ( deg ) => deg * Math.PI / 180;
 
     const [lat1, lon1] = coord1;
     const [lat2, lon2] = coord2;
 
     const R = 6371e3; // Radius of the Earth in meters
-    const φ1 = toRad(lat1);
-    const φ2 = toRad(lat2);
-    const Δφ = toRad(lat2 - lat1);
-    const Δλ = toRad(lon2 - lon1);
+    const φ1 = toRad( lat1 );
+    const φ2 = toRad( lat2 );
+    const Δφ = toRad( lat2 - lat1 );
+    const Δλ = toRad( lon2 - lon1 );
 
-    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const a = Math.sin( Δφ / 2 ) ** 2 + Math.cos( φ1 ) * Math.cos( φ2 ) * Math.sin( Δλ / 2 ) ** 2;
+    const c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
 
     return R * c; // Distance in meters
 }
 
 // Function to find the nearest poi
-function findNearest(currentLocation, poiDict) {
+function findNearest( currentLocation, poiDict ) {
     let nearestPrinter = null;
     let shortestDistance = Infinity;
 
-    for (const [printerName, [coords]] of Object.entries(poiDict)) {
-        const distance = haversineDistance(currentLocation, coords);
-        if (distance < shortestDistance) {
+    for ( const [printerName, [coords]] of Object.entries( poiDict ) ) {
+        const distance = haversineDistance( currentLocation, coords );
+        if ( distance < shortestDistance ) {
             shortestDistance = distance;
             nearestPrinter = { name: printerName, coords };
         }
@@ -468,36 +577,36 @@ function findNearest(currentLocation, poiDict) {
 }
 
 // Routes to nearest poi based on button input
-function routeToNearest(poi) {
+function routeToNearest( poi ) {
     // Assume we have the user's current location (latitude and longitude)
-    if (poi === "printer") {
+    if ( poi === "printer" ) {
         poiDict = uicPrinters;
-    } else if (poi === "bathroom"){
+    } else if ( poi === "bathroom" ) {
         poiDict = uicBathrooms;
     }
 
     navigator.geolocation.getCurrentPosition(
-        (position) => {
+        ( position ) => {
             const userLocation = [position.coords.latitude, position.coords.longitude];
-            const nearest = findNearest(userLocation, poiDict);
+            const nearest = findNearest( userLocation, poiDict );
 
-            if (nearest) {
-                startNavigationByLocation(nearest.coords[0], nearest.coords[1]);
+            if ( nearest ) {
+                startNavigationByLocation( nearest.coords[0], nearest.coords[1] );
             } else {
-                alert(`No ${poi} found.`);
+                alert( `No ${poi} found.` );
             }
         },
-        (error) => {
-            console.error("Error getting location:", error);
-            alert("Could not retrieve your location. Please try again.");
+        ( error ) => {
+            console.error( "Error getting location:", error );
+            alert( "Could not retrieve your location. Please try again." );
         }
     );
 }
 
-document.getElementById("routeToPrinterButton").addEventListener("click", () => {
-    routeToNearest("printer");
-});
+document.getElementById( "routeToPrinterButton" ).addEventListener( "click", () => {
+    routeToNearest( "printer" );
+} );
 
-document.getElementById("routeToBathroomButton").addEventListener("click", () => {
-    routeToNearest("bathroom");
-});
+document.getElementById( "routeToBathroomButton" ).addEventListener( "click", () => {
+    routeToNearest( "bathroom" );
+} );

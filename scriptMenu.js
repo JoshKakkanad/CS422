@@ -15,13 +15,12 @@ function showSideMenu() {
 function closeSideMenu() {
     document.getElementById( "sideMenu" ).style.width = "0px";
     document.getElementById( "overlay" ).style.display = "none";
-    setTimeout(function() {
+    setTimeout( function () {
         document.getElementById( "sidebar" ).style.display = "block";
-    }, 200);
+    }, 200 );
 }
 
 function showFavorites() {
-    console.log( "ee" );
     document.getElementById( "sideMenu" ).style.width = "0px";
     document.getElementById( "favorites-menu" ).style.width = "350px";
 }
@@ -33,11 +32,7 @@ function closeFavorites() {
 }
 
 function showBuildings() {
-    closeFavorites();
-    closeSideMenu();
-    setTimeout(function() {
-        document.getElementById( "sidebar" ).style.display = "none";
-    }, 200);
+    document.getElementById( "sideMenu" ).style.width = "0px";
     document.getElementById( "buildings-menu" ).style.width = "350px";
 }
 
@@ -79,6 +74,7 @@ searchInput.addEventListener( 'input', () => {
                 onDestinationPicked( suggestion );
                 searchInput.value = "";
                 suggestionsList.innerHTML = '';
+                document.getElementById( 'end' ).value = suggestion;
             } );
             suggestionsList.appendChild( li );
         } );
