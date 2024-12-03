@@ -89,7 +89,9 @@ const uicBuildings = {
     "Physical Education Building": [41.86680481405539, -87.64941632243408],
     "PEB": [41.86680481405539, -87.64941632243408],
     "Roosevelt Road Building": [41.867552652316014, -87.64614850944423],
-    "RRB": [41.867552652316014, -87.64614850944423]
+    "RRB": [41.867552652316014, -87.64614850944423],
+    "Thomas Beckham Hall": [41.86626111882355, -87.64724135398865],
+    "TBH": [41.86626111882355, -87.64724135398865]
 };
 
 const uicBuildingsBack = uicBuildings; // to make custom favorites work, hacky workaround but it's late to forgive me
@@ -116,9 +118,33 @@ const uicBuildingsAmenities = {
             <li>Bathrooms</li>
             <li>Printers</li>
             <li>Commons Dining Hal</li>
-            <li>Sushi Do</li>
+            <li>Market / grocery store - Located on 2nd Floor</li>
+            <li>Dunkin’ Donuts - Located on 1st Floor</li>
+            <li>Moe's Southwest Grill - Located on 2nd Floor</li>
+            <li>Panda Express - Located on 1st Floor</li>
+            <li>Subway - Located on 2nd Floor</li>
+            <li>Chick-fil-A - Located on 1st Floor</li>
         </ul>
-        `]
+        `],
+    "Lecture Center Building A": ["building-images/lca.png", "Lecture Center A is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building B": ["building-images/lcb.png", "Lecture Center B is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building C": ["building-images/lcc.png", "Lecture Center C is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building D": ["building-images/lcd.png", "Lecture Center D is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Lecture Center Building E": ["building-images/lce.png", "Lecture Center E is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCA": ["building-images/lca.png", "Lecture Center A is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCB": ["building-images/lcb.png", "Lecture Center B is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCC": ["building-images/lcc.png", "Lecture Center C is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCD": ["building-images/lcd.png", "Lecture Center D is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "LCE": ["building-images/lce.png", "Lecture Center E is part of an 85,549 sq ft six-building general-use classroom Lecture Center Complex that opened for operation in 1965 and was designed by Walter Netsch."],
+    "Daley Library": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "LIB": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "Library": ["building-images/daleylib.png", "The Richard J. Daley Library has books, computers and other materials for study in the humanities, social sciences, sciences, and engineering. The librarys website is available 24/7, and you will find many books, journal articles, and databases online. The IDEA Commons The IDEA Commons, a state-ofthe-art collaborative learning environment, is open 24 hours Sunday-Thursday."],
+    "Academic & Residential Complex": ["building-images/arc.png", "The new Academic and Residential Complex (ARC) is a public private partnership between UIC and American Campus Communities (ACC). As part of a master plan to address the university¿s increasing enrollment, this new living-learning community features a 10-story, 146,000-square-foot residence hall with 548 beds in traditional dorm rooms and semi-suite style units. A two-story, 54,000-square-foot academic center on the west side of ARC holds three large tiered lecture halls, active learning classrooms, several small group study rooms, a tutoring center and multiple collaboration spaces."],
+    "ARC": ["building-images/arc.png", "The new Academic and Residential Complex (ARC) is a public private partnership between UIC and American Campus Communities (ACC). As part of a master plan to address the university¿s increasing enrollment, this new living-learning community features a 10-story, 146,000-square-foot residence hall with 548 beds in traditional dorm rooms and semi-suite style units. A two-story, 54,000-square-foot academic center on the west side of ARC holds three large tiered lecture halls, active learning classrooms, several small group study rooms, a tutoring center and multiple collaboration spaces."],
+    "TBH": ["building-images/tbh.png", "Thomas Beckham Hall has opened in August 2003 and is a student apartment building housing 450 upperclassmen students on the south side of campus. Thomas Beckham Hall was named after Thomas Beckham, who was the dean of the College of Associated Health Professions in 1982 when UIC was formed by the merger of the medical center and undergraduate campuses. "],
+    "Thomas Beckham Hall": ["building-images/tbh.png", "Thomas Beckham Hall has opened in August 2003 and is a student apartment building housing 450 upperclassmen students on the south side of campus. Thomas Beckham Hall was named after Thomas Beckham, who was the dean of the College of Associated Health Professions in 1982 when UIC was formed by the merger of the medical center and undergraduate campuses. "],
+    //"": ["building-images/.png", ""],
+
 }
 
 // Initialize the map
@@ -484,6 +510,8 @@ function showPopupAtDest( selectedDest, name ) {
     marker.on( 'popupclose', function () {
         marker.remove();
     } );
+
+    console.log( `Pin "${name}" created at: ${selectedDest[0]}, ${selectedDest[1]}` );
 }
 
 // called when we want to start navigating to some point
