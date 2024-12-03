@@ -3,6 +3,11 @@ let routingLayer;
 let userMarker;
 const apiKey = '1ea29fb3-6b38-4313-b0f8-4bf703ef6892';
 
+const defaultLat = 41.871894;
+const defaultLng = -87.64924;
+const defaultZoom = 20;
+
+
 
 const uicBuildings = {
     // Academic and Administrative Facilities
@@ -89,258 +94,380 @@ const uicBuildings = {
 
 // Initialize the map
 function initializeMap() {
-    map = L.map('map').setView([41.8708, -87.6505], 15);
+    map = L.map( 'map' ).setView( [defaultLat, defaultLng], defaultZoom );
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    } ).addTo( map );
 
-    map.locate({ watch: true, setView: true, maxZoom: 16 });
-    map.zoomControl.setPosition('bottomleft');
-    map.on('locationfound', onLocationFound);
+    map.locate( { watch: true, setView: false, maxZoom: defaultZoom } );
+    map.zoomControl.setPosition( 'bottomleft' );
+    map.on( 'locationfound', onLocationFound );
 }
 
 // Handle live location tracking
-function onLocationFound(e) {
-    if (userMarker) {
-        userMarker.setLatLng(e.latlng);
+function onLocationFound( e ) {
+    if ( userMarker ) {
+        userMarker.setLatLng( e.latlng );
     } else {
-        userMarker = L.marker(e.latlng, { icon: L.icon({ iconUrl: 'gps_icon.png', iconSize: [32, 32] }) }).addTo(map);
+        userMarker = L.marker( e.latlng, { icon: L.icon( { iconUrl: 'gps_icon.png', iconSize: [32, 32] } ) } ).addTo( map );
     }
-    console.log("User location updated:", e.latlng);
+    console.log( "User location updated:", e.latlng );
+
+    // Stop refreshing location. If we want live navi, need to handle it here?
+    map.stopLocate();
 }
 
 
-async function geocodeAddress(address) {
+// Tries to find the coordinates of provided address
+// If provided known building name, will return coordinated to that
+// Otherwise, will use API to try to find building by name
+async function geocodeAddress( address ) {
     // Convert input to lowercase to match dictionary keys
     const normalizedAddress = address.toLowerCase();
 
     // Check if the address matches a UIC building or abbreviation in our local dictionary
-    for (const [key, coords] of Object.entries(uicBuildings)) {
-        if (key.toLowerCase() === normalizedAddress) {
-            console.log(`Using local coordinates for: ${key}`);
+    for ( const [key, coords] of Object.entries( uicBuildings ) ) {
+        if ( key.toLowerCase() === normalizedAddress ) {
+            console.log( `Using local coordinates for: ${key}` );
             return coords;
         }
     }
 
     // If not found in dictionary, fall back to using the GraphHopper API
-    const encodedAddress = encodeURIComponent(address);
+    const encodedAddress = encodeURIComponent( address );
     const url = `https://graphhopper.com/api/1/geocode?q=${encodedAddress}&locale=en&limit=1&key=${apiKey}`;
 
-    console.log(`Geocoding address: ${address}`);
-    console.log(`Encoded URL: ${url}`);
+    console.log( `Geocoding address: ${address}` );
+    console.log( `Encoded URL: ${url}` );
 
     try {
-        const response = await fetch(url);
+        const response = await fetch( url );
         const data = await response.json();
 
-        if (!data.hits || data.hits.length === 0) {
-            alert("Address not found. Please check the address format.");
+        if ( !data.hits || data.hits.length === 0 ) {
+            alert( "Address not found. Please check the address format." );
             return null;
         }
 
         const { lat, lng } = data.hits[0].point;
-        console.log(`Geocoded coordinates: Latitude = ${lat}, Longitude = ${lng}`);
+        console.log( `Geocoded coordinates: Latitude = ${lat}, Longitude = ${lng}` );
         return [lat, lng];
-    } catch (error) {
-        console.error("Error during geocoding fetch:", error);
+    } catch ( error ) {
+        console.error( "Error during geocoding fetch:", error );
         return null;
     }
 }
 
 
 // Utility function to decode the encoded polyline
-function decodePolyline(encoded, precision = 1e5) {
+function decodePolyline( encoded, precision = 1e5 ) {
     let index = 0, lat = 0, lng = 0;
     const coordinates = [];
     const factor = precision;
 
-    while (index < encoded.length) {
+    while ( index < encoded.length ) {
         let shift = 0, result = 0;
         let byte;
         do {
-            byte = encoded.charCodeAt(index++) - 63;
-            result |= (byte & 0x1f) << shift;
+            byte = encoded.charCodeAt( index++ ) - 63;
+            result |= ( byte & 0x1f ) << shift;
             shift += 5;
-        } while (byte >= 0x20);
-        const deltaLat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+        } while ( byte >= 0x20 );
+        const deltaLat = ( ( result & 1 ) ? ~( result >> 1 ) : ( result >> 1 ) );
         lat += deltaLat;
 
         shift = 0;
         result = 0;
         do {
-            byte = encoded.charCodeAt(index++) - 63;
-            result |= (byte & 0x1f) << shift;
+            byte = encoded.charCodeAt( index++ ) - 63;
+            result |= ( byte & 0x1f ) << shift;
             shift += 5;
-        } while (byte >= 0x20);
-        const deltaLng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+        } while ( byte >= 0x20 );
+        const deltaLng = ( ( result & 1 ) ? ~( result >> 1 ) : ( result >> 1 ) );
         lng += deltaLng;
 
-        coordinates.push([lat / factor, lng / factor]);
+        coordinates.push( [lat / factor, lng / factor] );
     }
     return coordinates;
 }
 
 
-async function route(startCoords, endCoords) {
-    if (!startCoords || !endCoords) {
-        alert("Invalid coordinates for routing.");
+async function route( startCoords, endCoords ) {
+    if ( !startCoords || !endCoords ) {
+        alert( "Invalid coordinates for routing." );
         return;
     }
 
-    if (routingLayer) routingLayer.remove();
+    if ( routingLayer ) routingLayer.remove();
+
+    alert( "Navi called from \n" + startCoords + "\nto\n" + endCoords + "\nbut navi disabled to limit API calls" );
+    return; // temp. disable route to limit api calls TODO remove me don't forget pls
 
     const url = `https://graphhopper.com/api/1/route?point=${startCoords[0]},${startCoords[1]}&point=${endCoords[0]},${endCoords[1]}&vehicle=foot&locale=en&key=${apiKey}`;
-    console.log("Routing URL:", url);
+    console.log( "Routing URL:", url );
 
     try {
-        const response = await fetch(url);
+        const response = await fetch( url );
         const data = await response.json();
 
-        console.log("Routing response data:", data);
+        console.log( "Routing response data:", data );
 
         // Check if the response contains errors
-        if (data.info && data.info.errors && data.info.errors.length > 0) {
-            console.error("Routing API errors:", data.info.errors);
-            alert(`Routing API error: ${data.info.errors[0].message}`);
+        if ( data.info && data.info.errors && data.info.errors.length > 0 ) {
+            console.error( "Routing API errors:", data.info.errors );
+            alert( `Routing API error: ${data.info.errors[0].message}` );
             return;
         }
 
         // Check if the 'paths' array is present and has at least one route
-        if (!data.paths || data.paths.length === 0) {
-            console.error("No route found in response:", data);
-            alert("No route could be found. Please try a different route.");
+        if ( !data.paths || data.paths.length === 0 ) {
+            console.error( "No route found in response:", data );
+            alert( "No route could be found. Please try a different route." );
             return;
         }
 
         const path = data.paths[0];
-        if (!path || !path.points) {
-            console.error("Invalid path structure:", path);
-            alert("Invalid routing response. Please try again.");
+        if ( !path || !path.points ) {
+            console.error( "Invalid path structure:", path );
+            alert( "Invalid routing response. Please try again." );
             return;
         }
 
         // Decode the encoded polyline
-        const points = decodePolyline(path.points);
-        console.log("Decoded route points:", points);
+        const points = decodePolyline( path.points );
+        console.log( "Decoded route points:", points );
 
         // Draw the route on the map
-        routingLayer = L.polyline(points, { color: 'blue' }).addTo(map);
-        map.fitBounds(routingLayer.getBounds());
+        routingLayer = L.polyline( points, { color: 'blue' } ).addTo( map );
+        map.fitBounds( routingLayer.getBounds() );
 
-    } catch (err) {
-        console.error("Routing error:", err);
-        alert("Routing failed. Please check your inputs or try again later.");
+    } catch ( err ) {
+        console.error( "Routing error:", err );
+        alert( "Routing failed. Please check your inputs or try again later." );
     }
 }
 
-
-
-
-// Event listener for the route button
-document.getElementById('routeBtn').addEventListener('click', async () => {
-    const startAddress = document.getElementById('start').value.trim();
-    const endAddress = document.getElementById('end').value.trim();
-
+// Starts navigation based on building names, not coordinates
+// Initially this code was called by Josh's navigation UI
+async function startNavigation( startAddress, endAddress ) {
     // Check if an end address is provided
-    if (!endAddress) {
-        alert("Please enter a destination address.");
+    if ( !endAddress ) {
+        alert( "Please enter a destination address." );
         return;
     }
 
     let startCoords;
-    const endCoords = await geocodeAddress(endAddress);
+    const endCoords = await geocodeAddress( endAddress );
 
     // If no starting address is provided, use the user's current location
-    if (!startAddress) {
-        if (userMarker && userMarker.getLatLng()) {
+    if ( !startAddress ) {
+        if ( userMarker && userMarker.getLatLng() ) {
             const userLocation = userMarker.getLatLng();
             startCoords = [userLocation.lat, userLocation.lng];
-            console.log("Using user's current location as start:", startCoords);
+            console.log( "Using user's current location as start:", startCoords );
         } else {
-            alert("Unable to determine your current location. Please enter a starting address.");
+            alert( "Unable to determine your current location. Please enter a starting address." );
             return;
         }
     } else {
         // Geocode the starting address
-        startCoords = await geocodeAddress(startAddress);
+        startCoords = await geocodeAddress( startAddress );
     }
 
     // Check if both coordinates are valid
-    if (startCoords && endCoords) {
-        console.log("Start coordinates:", startCoords);
-        console.log("End coordinates:", endCoords);
-        await route(startCoords, endCoords);
+    if ( startCoords && endCoords ) {
+        console.log( "Start coordinates:", startCoords );
+        console.log( "End coordinates:", endCoords );
+        await route( startCoords, endCoords );
     }
-});
+}
+
+// Starts navigation based on coordinates.
+// Uses current location as start address (if available)
+// Otherwise nothing happens
+async function startNavigationByLocation( a, b ) {
+    if ( !userMarker ) {
+        alert( "Unable to determine your current location. Please enable location services." );
+        return;
+    }
+    const startLoc = userMarker.getLatLng();
+    await route( [startLoc.lat, startLoc.lng], [a, b] );
+}
+
+
+// Event listener for the route button
+document.getElementById( 'routeBtn' ).addEventListener( 'click', async () => {
+    const startAddress = document.getElementById( 'start' ).value.trim();
+    const endAddress = document.getElementById( 'end' ).value.trim();
+
+    startNavigation( startAddress, endAddress );
+} );
 
 // Event listener for the cancel route button
-document.getElementById('cancelBtn').addEventListener('click', () => {
-    if (routingLayer) {
+document.getElementById( 'cancelBtn' ).addEventListener( 'click', () => {
+    if ( routingLayer ) {
         routingLayer.remove();
         routingLayer = null;
-        console.log("Route canceled.");
+        console.log( "Route canceled." );
     }
 
     // Clear the input fields
-    document.getElementById('start').value = '';
-    document.getElementById('end').value = '';
-});
+    document.getElementById( 'start' ).value = '';
+    document.getElementById( 'end' ).value = '';
+} );
 
 
 // Check if we're on the main page
-if (document.getElementById('postEventBtn')) {
+if ( document.getElementById( 'postEventBtn' ) ) {
     // Add event listener to the "Post Event" button on the main page
-    document.getElementById('postEventBtn').addEventListener('click', () => {
+    document.getElementById( 'postEventBtn' ).addEventListener( 'click', () => {
         window.location.href = 'social.html';
-    });
+    } );
 }
 
 // Check if we're on the social.html page
-if (document.getElementById('addEventBtn')) {
-    const eventBoard = document.getElementById('event-board');
-    const storedEvents = JSON.parse(localStorage.getItem('uicEvents')) || [];
+if ( document.getElementById( 'addEventBtn' ) ) {
+    const eventBoard = document.getElementById( 'event-board' );
+    const storedEvents = JSON.parse( localStorage.getItem( 'uicEvents' ) ) || [];
 
     // Load existing events from local storage
-    storedEvents.forEach(event => addEventToBoard(event));
+    storedEvents.forEach( event => addEventToBoard( event ) );
 
     // Add event listener to the "Add Event" button on social.html page
-    document.getElementById('addEventBtn').addEventListener('click', () => {
-        const title = document.getElementById('eventTitle').value.trim();
-        const description = document.getElementById('eventDescription').value.trim();
-        const location = document.getElementById('eventLocation').value.trim();
+    document.getElementById( 'addEventBtn' ).addEventListener( 'click', () => {
+        const title = document.getElementById( 'eventTitle' ).value.trim();
+        const description = document.getElementById( 'eventDescription' ).value.trim();
+        const location = document.getElementById( 'eventLocation' ).value.trim();
 
-        if (title && description && location) {
+        if ( title && description && location ) {
             const event = { title, description, location };
-            addEventToBoard(event);
-            saveEvent(event);
+            addEventToBoard( event );
+            saveEvent( event );
 
             // Clear the form fields after saving
-            document.getElementById('eventTitle').value = '';
-            document.getElementById('eventDescription').value = '';
-            document.getElementById('eventLocation').value = '';
+            document.getElementById( 'eventTitle' ).value = '';
+            document.getElementById( 'eventDescription' ).value = '';
+            document.getElementById( 'eventLocation' ).value = '';
         } else {
-            alert("Please fill out all fields.");
+            alert( "Please fill out all fields." );
         }
-    });
+    } );
 
     // Function to add an event to the event board
-    function addEventToBoard(event) {
-        const eventTile = document.createElement('div');
+    function addEventToBoard( event ) {
+        const eventTile = document.createElement( 'div' );
         eventTile.className = 'event-tile';
         eventTile.innerHTML = `
             <h3>${event.title}</h3>
             <p>${event.description}</p>
             <p><strong>Location:</strong> ${event.location}</p>
         `;
-        eventBoard.appendChild(eventTile);
+        eventBoard.appendChild( eventTile );
     }
 
     // Function to save the event to local storage
-    function saveEvent(event) {
-        storedEvents.push(event);
-        localStorage.setItem('uicEvents', JSON.stringify(storedEvents));
+    function saveEvent( event ) {
+        storedEvents.push( event );
+        localStorage.setItem( 'uicEvents', JSON.stringify( storedEvents ) );
     }
 }
 
 initializeMap();
+
+const popup = L.popup()
+    .setContent( 'I am a standalone popup.' );
+
+
+// Called if user clicks on left-lower corner location button
+function getCurrentLocation() {
+    map.locate( { setView: true, maxZoom: 16, watch: true } );
+}
+
+map.on( 'locationfound', onLocationFound );
+map.on( 'click', onMapClick );
+
+/*
+    Called when user clicks somewhere on the map.
+    Tries to find closest known UIC building, otherwise creates generic pin.
+    Pin offers navigation to selected location.
+*/
+function onMapClick( e ) {
+    const clickedLocation = e.latlng;
+    let closestBuilding = null;
+    let minDistance = Infinity;
+    const maxDistance = 100; // in meters, if no known building within this distance, place pin
+
+    // try to find building closest to the clicked location
+    for ( const buildingName in uicBuildings ) {
+        const buildingCoords = uicBuildings[buildingName];
+        const buildingLocation = L.latLng( buildingCoords[0], buildingCoords[1] );
+
+        // Calculate distance from the clicked location to the building
+        const distance = clickedLocation.distanceTo( buildingLocation );
+
+        // If the building is closer and within the max distance, update closestBuilding
+        if ( distance < minDistance && distance <= maxDistance ) {
+            closestBuilding = buildingName;
+            minDistance = distance;
+        }
+    }
+
+    // If no closest building, show the picked location
+    if ( !closestBuilding ) {
+        showPopupAtDest( [clickedLocation.lat, clickedLocation.lng], "Selected location" );
+    }
+    else {
+        showPopupAtDest( uicBuildings[closestBuilding], closestBuilding );
+    }
+}
+
+function populateBuildingsMenu() {
+    const menuDiv = document.getElementById( "buildings-menu" );
+
+    for ( const [name, coordinates] of Object.entries( uicBuildings ) ) {
+        const link = document.createElement( "a" );
+        link.href = `#`;
+        link.onclick = () => {
+            console.log( `Navigating to ${name} at ${coordinates[0]}, ${coordinates[1]}` );
+            document.getElementById( 'end' ).value = name;
+            closeFavorites();
+            navigateButtonClick();
+        };
+
+        // Set the inner HTML of the link to show the building's name
+        link.innerHTML = `
+        <div class="building-list">
+          ${name}
+        </div>
+      `;
+
+        menuDiv.appendChild( link );
+    }
+}
+
+populateBuildingsMenu();
+
+function showPopupAtDest( selectedDest, name ) {
+    const popupContent = `
+    <div>
+        <h3>${name}</h3>
+        <button id="popup-button" onclick="startNavigationByLocation(${selectedDest})">Start Navigation</button>
+    </div>
+`;
+
+    const marker = L.marker( [selectedDest[0], selectedDest[1]] ).bindPopup( popupContent ).addTo( map ).openPopup();
+
+    marker.on( 'popupclose', function () {
+        marker.remove();
+    } );
+}
+
+// called when we want to start navigating to some point
+// shows destination on map and offers to start nav.
+async function onDestinationPicked( destination ) {
+    const selectedDest = await geocodeAddress( destination );
+    map.setView( [selectedDest[0], selectedDest[1]], 20 );
+
+    showPopupAtDest( selectedDest, destination );
+}
