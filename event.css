@@ -1,0 +1,25 @@
+.event-box {
+  all: unset;
+  background-color: white;
+  width: 20em;
+  height: 22em;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.4);
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-box img {
+  width: inherit;
+  height: 10em;
+}
+
+#events {
+  display: flex;
+  gap: 1em;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 0 0 33.3333%;
+}
