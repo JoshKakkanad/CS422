@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: my-personal-test-service
+  description: A mock service to verify my local Backstage integration
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests
